@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -17,16 +17,77 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/**
+ JLRRouteDefinition is a model object representing a registered route, including the URL scheme, route pattern, and priority.
+ 
+ This class can be subclassed to customize route parsing behavior by overriding -routeResponseForRequest:decodePlusSymbols:.
+ -callHandlerBlockWithParameters can also be overriden to customize the parameters passed to the handlerBlock.
+ */
+
 @interface JLRRouteDefinition : NSObject
 
-@property (nonatomic, strong, readonly) NSString *scheme;
-@property (nonatomic, strong, readonly) NSString *pattern;
+/// The URL scheme for which this route applies, or JLRoutesGlobalRoutesScheme if global.
+@property (nonatomic, copy, readonly) NSString *scheme;
+
+/// The route pattern.
+@property (nonatomic, copy, readonly) NSString *pattern;
+
+/// The priority of this route pattern.
 @property (nonatomic, assign, readonly) NSUInteger priority;
 
-- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+/// The handler block to invoke when a match is found.
+@property (nonatomic, copy, readonly) BOOL (^handlerBlock)(NSDictionary *parameters);
 
+
+///---------------------------------
+/// @name Creating Route Definitions
+///---------------------------------
+
+
+/**
+ Creates a new route definition. The created definition can be directly added to an instance of JLRoutes.
+ 
+ This is the designated initializer.
+ 
+ @param scheme The URL scheme this route applies for, or JLRoutesGlobalRoutesScheme if global.
+ @param pattern The full route pattern ('/foo/:bar')
+ @param priority The route priority, or 0 if default.
+ @param handlerBlock The handler block to call when a successful match is found.
+ 
+ @returns The newly initialized route definition.
+ */
+- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock NS_DESIGNATED_INITIALIZER;
+
+/// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
+- (instancetype)init NS_UNAVAILABLE;
+
+/// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
++ (instancetype)new NS_UNAVAILABLE;
+
+
+///-------------------------------
+/// @name Matching Route Requests
+///-------------------------------
+
+
+/**
+ Creates and returns a JLRRouteResponse for the provided JLRRouteRequest. The response specifies if there was a match or not.
+ 
+ @param request The JLRRouteRequest to create a response for.
+ @param decodePlusSymbols The global plus symbol decoding option value.
+ 
+ @returns An JLRRouteResponse instance representing the result of attempting to match request to thie route definition.
+ */
 - (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols;
 
+
+/**
+ Invoke handlerBlock with the given parameters. This may be overriden by subclasses.
+ 
+ @param parameters The parameters to pass to handlerBlock.
+ 
+ @returns The value returned by calling handlerBlock (YES if it is considered handled and NO if not).
+ */
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 
 @end

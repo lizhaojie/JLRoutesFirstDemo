@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,12 +15,30 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+@class JLRRouteDefinition;
+
+
+/// The matching route pattern, passed in the handler parameters.
 extern NSString *const JLRoutePatternKey;
+
+/// The original URL that was routed, passed in the handler parameters.
 extern NSString *const JLRouteURLKey;
+
+/// The matching route scheme, passed in the handler parameters.
 extern NSString *const JLRouteSchemeKey;
+
+/// The wildcard components (if present) of the matching route, passed in the handler parameters.
 extern NSString *const JLRouteWildcardComponentsKey;
+
+/// The global routes namespace.
+/// @see JLRoutes +globalRoutes
 extern NSString *const JLRoutesGlobalRoutesScheme;
 
+
+
+/**
+ The JLRoutes class is the main entry-point into the JLRoutes framework. Used for accessing schemes, managing routes, and routing URLs.
+ */
 
 @interface JLRoutes : NSObject
 
@@ -28,12 +46,15 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @property (nonatomic, assign) BOOL shouldFallbackToGlobalRoutes;
 
 /// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
-@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
+@property (nonatomic, copy, nullable) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
 
 
-#pragma mark - Routing Schemes
+///-------------------------------
+/// @name Routing Schemes
+///-------------------------------
 
-/// Returns the global routing scheme (this is used by the +addRoute methods by default)
+
+/// Returns the global routing scheme
 + (instancetype)globalRoutes;
 
 /// Returns a routing namespace for the given scheme
@@ -46,7 +67,13 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 + (void)unregisterAllRouteSchemes;
 
 
-#pragma mark - Registering Routes
+///-------------------------------
+/// @name Managing Routes
+///-------------------------------
+
+
+/// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
+- (void)addRoute:(JLRRouteDefinition *)routeDefinition;
 
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
@@ -68,20 +95,31 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
 - (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
 
+/// Return all registered routes in the receiving scheme namespace.
+/// @see allRoutes
+- (NSArray <JLRRouteDefinition *> *)routes;
 
-#pragma mark - Routing URLs
+/// All registered routes, keyed by scheme
+/// @see routes
++ (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
-/// Returns whether a route will match a given URL in any routes scheme, but does not call any blocks.
+
+///-------------------------------
+/// @name Routing URLs
+///-------------------------------
+
+
+/// Returns YES if the provided URL will successfully match against any registered route, NO if not.
 + (BOOL)canRouteURL:(nullable NSURL *)URL;
 
-/// Returns whether a route will match a given URL in a specific scheme, but does not call any blocks.
+/// Returns YES if the provided URL will successfully match against any registered route for the current scheme, NO if not.
 - (BOOL)canRouteURL:(nullable NSURL *)URL;
 
-/// Routes a URL in any routes scheme, calling handler blocks for patterns that match the URL until one returns YES.
+/// Routes a URL, calling handler blocks for patterns that match the URL until one returns YES.
 /// If no matching route is found, the unmatchedURLHandler will be called (if set).
 + (BOOL)routeURL:(nullable NSURL *)URL;
 
-/// Routes a URL in a specific scheme, calling handler blocks for patterns that match the URL until one returns YES.
+/// Routes a URL within a particular scheme, calling handler blocks for patterns that match the URL until one returns YES.
 /// If no matching route is found, the unmatchedURLHandler will be called (if set).
 - (BOOL)routeURL:(nullable NSURL *)URL;
 
@@ -96,50 +134,85 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @end
 
 
-#pragma mark - Global Options
+// Global settings to use for parsing and routing.
 
 @interface JLRoutes (GlobalOptions)
 
-/// Enable or disable verbose logging. Defaults to NO.
+///----------------------------------
+/// @name Configuring Global Options
+///----------------------------------
+
+/// Configures verbose logging. Defaults to NO.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
 
-/// Returns current verbose logging enabled state.
+/// Returns current verbose logging enabled state. Defaults to NO.
 + (BOOL)isVerboseLoggingEnabled;
 
-/// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
+/// Configures if '+' should be replaced with spaces in parsed values. Defaults to YES.
 + (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode;
 
-/// Returns current plus symbol decoding state.
+/// Returns if '+' should be replaced with spaces in parsed values. Defaults to YES.
 + (BOOL)shouldDecodePlusSymbols;
+
+/// Configures if URL host is always considered to be a path component. Defaults to NO.
++ (void)setAlwaysTreatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent;
+
+/// Returns if URL host is always considered to be a path component. Defaults to NO.
++ (BOOL)alwaysTreatsHostAsPathComponent;
 
 @end
 
 
+
 #pragma mark - Deprecated
 
+/// Deprecated, use JLRoutePatternKey instead.
 extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
+
+/// Deprecated, use JLRouteURLKey instead.
 extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
+
+/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+
+/// Deprecated, use JLRouteWildcardComponentsKey instead.
 extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
+
+/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
+/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+
+/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
+
 
 @interface JLRoutes (Deprecated)
 
-// All the class method conveniences have been deprecated. They make the API/header confusing and are unncessary.
-// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
+///----------------------------------
+/// @name Deprecated Methods
+///----------------------------------
 
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)removeRoute:(NSString *)routePattern DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)removeAllRoutes DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use +canRouteURL: instead.
 + (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters DEPRECATED_MSG_ATTRIBUTE("Use +canRouteURL: instead.");
 
-// Other deprecations
-
+/// Use +canRouteURL: instead.
 - (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters DEPRECATED_MSG_ATTRIBUTE("Use -canRouteURL: instead.");
 
 @end

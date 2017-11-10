@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -15,7 +15,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-@interface JLROptionalRouteParser : NSObject
+@interface JLRParsingUtilities : NSObject
+
++ (NSString *)variableValueFrom:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols;
+
++ (NSDictionary *)queryParams:(NSDictionary *)queryParams decodePlusSymbols:(BOOL)decodePlusSymbols;
 
 + (NSArray <NSString *> *)expandOptionalRoutePatternsForPattern:(NSString *)routePattern;
 

@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -24,13 +24,14 @@
 
 @implementation JLRRouteRequest
 
-- (instancetype)initWithURL:(NSURL *)URL
+- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent
 {
     if ((self = [super init])) {
         self.URL = URL;
         
         NSURLComponents *components = [NSURLComponents componentsWithString:[self.URL absoluteString]];
-        if (components.host.length > 0 && ![components.host isEqualToString:@"localhost"]) {
+        
+        if (components.host.length > 0 && (alwaysTreatsHostAsPathComponent || (![components.host isEqualToString:@"localhost"] && [components.host rangeOfString:@"."].location == NSNotFound))) {
             // convert the host to "/" so that the host is considered a path component
             NSString *host = [components.percentEncodedHost copy];
             components.host = @"/";

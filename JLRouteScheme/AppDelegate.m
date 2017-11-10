@@ -7,14 +7,14 @@
 //
 
 #import "AppDelegate.h"
-#import "CTTabBarViewController.h"
+#import "LZJTabBarViewController.h"
 #import "FirstNextViewController.h"
 #import "FirstViewController.h"
 #import <JLRoutes.h>
 #import "AppDelegate+RegisterRoute.h"
 @interface AppDelegate ()
 @property (nonatomic, strong) UINavigationController *navVC;
-@property (nonatomic,strong) CTTabBarViewController *tab;
+@property (nonatomic,strong) LZJTabBarViewController *tab;
 
 @end
 
@@ -22,7 +22,7 @@
 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
-    CTTabBarViewController *tab = [[CTTabBarViewController alloc] init];
+    LZJTabBarViewController *tab = [[LZJTabBarViewController alloc] init];
     self.tab = tab;
     self.window.rootViewController = tab;
   

@@ -1,13 +1,12 @@
 //
-//  CTTabBarViewController.m
-//  RealTimeBus
+//  LZJTabBarViewController.m
 //
 //  Created by lizhaojie on 16/5/23.
 //  Copyright © 2016年 siemens. All rights reserved.
 //
 
-#import "CTTabBarViewController.h"
-#import "CTNavgationViewController.h"
+#import "LZJTabBarViewController.h"
+#import "LZJNavgationViewController.h"
 #import "FirstViewController.h"
 #import "SecondViewController.h"
 #import "ThirdViewController.h"
@@ -27,14 +26,14 @@
 #define TABBAR_NewsItem_Title @"three"
 
 
-@interface CTTabBarViewController ()
+@interface LZJTabBarViewController ()
 {
     
 }
 
 @end
 
-@implementation CTTabBarViewController
+@implementation LZJTabBarViewController
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil{
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -74,7 +73,7 @@
     __weak typeof(self) weakSelf = self;
     [[JLRoutes routesForScheme:@"RouteOne"]addRoute:@"/:tab1" handler:^BOOL(NSDictionary<NSString *,id> * _Nonnull parameters) {
         
-        CTNavgationViewController *nav = nil;
+        LZJNavgationViewController *nav = nil;
         NSString *className = parameters[@"tab1"];
         if ([className isEqualToString:NSStringFromClass([FirstViewController class])]) {
              nav = [self creatNavWithClassString:parameters[@"tab1"] params:[NSDictionary dictionaryWithObjectsAndKeys:TABBAR_HomeItem_Title,@"title",TABBAR_HomeItem_NormalImg,@"norImageName",TABBAR_HomeItem_SelectImg,@"selectImageName", nil]];
@@ -93,18 +92,18 @@
     }];
 }
 
--(CTNavgationViewController *) viewControllerWithTitle:(NSString *) title image:(UIImage *)image selectImage:(UIImage *)selectImage VC:(UIViewController *)VC{
+-(LZJNavgationViewController *) viewControllerWithTitle:(NSString *) title image:(UIImage *)image selectImage:(UIImage *)selectImage VC:(UIViewController *)VC{
     VC.tabBarItem.image = image;
     VC.tabBarItem.selectedImage = selectImage;
     VC.title = title ;
     VC.tabBarItem.title = title;
-    CTNavgationViewController *nav = [[CTNavgationViewController alloc] initWithRootViewController:VC];
+    LZJNavgationViewController *nav = [[LZJNavgationViewController alloc] initWithRootViewController:VC];
     return nav;
 }
-- (CTNavgationViewController*)creatNavWithClassString:(NSString*)className params:(NSDictionary *)params{
+- (LZJNavgationViewController*)creatNavWithClassString:(NSString*)className params:(NSDictionary *)params{
     Class class1 =  NSClassFromString(className);
     UIViewController *vc1 = [[class1 alloc] init];
-    CTNavgationViewController *nav = [self viewControllerWithTitle:params[@"title"] image:[UIImage imageNamed:params[@"norImageName"]] selectImage:[UIImage imageNamed:params[@"selectImageName"]] VC:vc1];
+    LZJNavgationViewController *nav = [self viewControllerWithTitle:params[@"title"] image:[UIImage imageNamed:params[@"norImageName"]] selectImage:[UIImage imageNamed:params[@"selectImageName"]] VC:vc1];
     return nav;
     
 }

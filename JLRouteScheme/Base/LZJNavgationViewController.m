@@ -1,21 +1,20 @@
 //
-//  CTNavgationViewController.m
-//  RealTimeBus
+//  LZJNavgationViewController.m
 //
 //  Created by lizhaojie on 16/5/23.
 //  Copyright © 2016年 siemens. All rights reserved.
 //
 
-#import "CTNavgationViewController.h"
+#import "LZJNavgationViewController.h"
 #import "LZJMacro.h"
-@interface CTNavgationViewController ()
+@interface LZJNavgationViewController ()
 
 @end
 
 #define CTNAVGATION_HimageName @"navHigh_bg.png"
 #define CTNAVGATION_ImageName @"nav_bg.png"
 
-@implementation CTNavgationViewController
+@implementation LZJNavgationViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

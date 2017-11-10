@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
  
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -12,14 +12,15 @@
 
 #import "JLRRouteDefinition.h"
 #import "JLRoutes.h"
+#import "JLRParsingUtilities.h"
 
 
 @interface JLRRouteDefinition ()
 
-@property (nonatomic, strong) NSString *pattern;
-@property (nonatomic, strong) NSString *scheme;
+@property (nonatomic, copy) NSString *pattern;
+@property (nonatomic, copy) NSString *scheme;
 @property (nonatomic, assign) NSUInteger priority;
-@property (nonatomic, strong) BOOL (^handlerBlock)(NSDictionary *parameters);
+@property (nonatomic, copy) BOOL (^handlerBlock)(NSDictionary *parameters);
 
 @property (nonatomic, strong) NSArray *patternComponents;
 
@@ -103,7 +104,7 @@
     if (isMatch) {
         // if it's a match, set up the param dictionary and create a valid match response
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params addEntriesFromDictionary:request.queryParams];
+        [params addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:decodePlusSymbols]];
         [params addEntriesFromDictionary:routeParams];
         [params addEntriesFromDictionary:[self baseMatchParametersForRequest:request]];
         response = [JLRRouteResponse validMatchResponseWithParameters:[params copy]];
@@ -117,10 +118,12 @@
     NSString *name = [value substringFromIndex:1];
     
     if (name.length > 1 && [name characterAtIndex:0] == ':') {
+        // Strip off the ':' in front of param names
         name = [name substringFromIndex:1];
     }
     
     if (name.length > 1 && [name characterAtIndex:name.length - 1] == '#') {
+        // Strip of trailing fragment
         name = [name substringToIndex:name.length - 1];
     }
     
@@ -132,12 +135,11 @@
     NSString *var = [value stringByRemovingPercentEncoding];
     
     if (var.length > 1 && [var characterAtIndex:var.length - 1] == '#') {
+        // Strip of trailing fragment
         var = [var substringToIndex:var.length - 1];
     }
     
-    if (decodePlusSymbols) {
-        var = [var stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, var.length)];
-    }
+    var = [JLRParsingUtilities variableValueFrom:var decodePlusSymbols:decodePlusSymbols];
     
     return var;
 }
@@ -151,7 +153,6 @@
 {
     if (self.handlerBlock == nil) {
         return YES;
-        //单个alert（debug模式下,release下不用弹有可能崩溃why）
     }
     
     return self.handlerBlock(parameters);

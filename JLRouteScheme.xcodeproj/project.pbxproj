@@ -12,8 +12,8 @@
 		E0C681BC890D8A1C791D7847 /* libPods-JLRouteSchemeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 46D771188057D60DB6AE9396 /* libPods-JLRouteSchemeTests.a */; };
 		F74046B61DEE6BF100D60D33 /* SecondViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046B51DEE6BF100D60D33 /* SecondViewController.m */; };
 		F74046B91DEE6C0700D60D33 /* ThirdViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046B81DEE6C0700D60D33 /* ThirdViewController.m */; };
-		F74046BF1DEE6F9700D60D33 /* CTNavgationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046BC1DEE6F9700D60D33 /* CTNavgationViewController.m */; };
-		F74046C01DEE6F9700D60D33 /* CTTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046BE1DEE6F9700D60D33 /* CTTabBarViewController.m */; };
+		F74046BF1DEE6F9700D60D33 /* LZJNavgationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046BC1DEE6F9700D60D33 /* LZJNavgationViewController.m */; };
+		F74046C01DEE6F9700D60D33 /* LZJTabBarViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046BE1DEE6F9700D60D33 /* LZJTabBarViewController.m */; };
 		F74046E11DEE759900D60D33 /* FirstNextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046E01DEE759900D60D33 /* FirstNextViewController.m */; };
 		F74046E41DEEC49D00D60D33 /* FirstNextNextViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046E31DEEC49D00D60D33 /* FirstNextNextViewController.m */; };
 		F74046EA1DEECC9200D60D33 /* AppDelegate+RegisterRoute.m in Sources */ = {isa = PBXBuildFile; fileRef = F74046E91DEECC9200D60D33 /* AppDelegate+RegisterRoute.m */; };
@@ -73,11 +73,11 @@
 		F74046B51DEE6BF100D60D33 /* SecondViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SecondViewController.m; sourceTree = "<group>"; };
 		F74046B71DEE6C0700D60D33 /* ThirdViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ThirdViewController.h; sourceTree = "<group>"; };
 		F74046B81DEE6C0700D60D33 /* ThirdViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ThirdViewController.m; sourceTree = "<group>"; };
-		F74046BB1DEE6F9700D60D33 /* CTNavgationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTNavgationViewController.h; sourceTree = "<group>"; };
-		F74046BC1DEE6F9700D60D33 /* CTNavgationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTNavgationViewController.m; sourceTree = "<group>"; };
-		F74046BD1DEE6F9700D60D33 /* CTTabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CTTabBarViewController.h; sourceTree = "<group>"; };
-		F74046BE1DEE6F9700D60D33 /* CTTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CTTabBarViewController.m; sourceTree = "<group>"; };
-		F74046C11DEE6FEC00D60D33 /* CCBusMacro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CCBusMacro.h; sourceTree = "<group>"; };
+		F74046BB1DEE6F9700D60D33 /* LZJNavgationViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZJNavgationViewController.h; sourceTree = "<group>"; };
+		F74046BC1DEE6F9700D60D33 /* LZJNavgationViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZJNavgationViewController.m; sourceTree = "<group>"; };
+		F74046BD1DEE6F9700D60D33 /* LZJTabBarViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LZJTabBarViewController.h; sourceTree = "<group>"; };
+		F74046BE1DEE6F9700D60D33 /* LZJTabBarViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = LZJTabBarViewController.m; sourceTree = "<group>"; };
+		F74046C11DEE6FEC00D60D33 /* LZJMacro.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = LZJMacro.h; sourceTree = "<group>"; };
 		F74046DF1DEE759900D60D33 /* FirstNextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstNextViewController.h; sourceTree = "<group>"; };
 		F74046E01DEE759900D60D33 /* FirstNextViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FirstNextViewController.m; sourceTree = "<group>"; };
 		F74046E21DEEC49D00D60D33 /* FirstNextNextViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstNextNextViewController.h; sourceTree = "<group>"; };
@@ -175,11 +175,11 @@
 		F74046BA1DEE6F9700D60D33 /* Base */ = {
 			isa = PBXGroup;
 			children = (
-				F74046C11DEE6FEC00D60D33 /* CCBusMacro.h */,
-				F74046BB1DEE6F9700D60D33 /* CTNavgationViewController.h */,
-				F74046BC1DEE6F9700D60D33 /* CTNavgationViewController.m */,
-				F74046BD1DEE6F9700D60D33 /* CTTabBarViewController.h */,
-				F74046BE1DEE6F9700D60D33 /* CTTabBarViewController.m */,
+				F74046C11DEE6FEC00D60D33 /* LZJMacro.h */,
+				F74046BB1DEE6F9700D60D33 /* LZJNavgationViewController.h */,
+				F74046BC1DEE6F9700D60D33 /* LZJNavgationViewController.m */,
+				F74046BD1DEE6F9700D60D33 /* LZJTabBarViewController.h */,
+				F74046BE1DEE6F9700D60D33 /* LZJTabBarViewController.m */,
 				F74ED4BD1DF024F200C9EDAA /* ModelOne.h */,
 				F74ED4BE1DF024F200C9EDAA /* ModelOne.m */,
 			);
@@ -461,7 +461,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		4E7B07D6E8E337C9BF2EF041 /* [CP] Embed Pods Frameworks */ = {
@@ -506,7 +506,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		C2E188E5F6D031E9C726D26C /* [CP] Embed Pods Frameworks */ = {
@@ -536,7 +536,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
 		D8F08B5BC9FDF34A997E48C5 /* [CP] Embed Pods Frameworks */ = {
@@ -583,8 +583,8 @@
 				F74ED4BF1DF024F200C9EDAA /* ModelOne.m in Sources */,
 				F79338681DED6A3F002EBD8E /* AppDelegate.m in Sources */,
 				F79338651DED6A3F002EBD8E /* main.m in Sources */,
-				F74046C01DEE6F9700D60D33 /* CTTabBarViewController.m in Sources */,
-				F74046BF1DEE6F9700D60D33 /* CTNavgationViewController.m in Sources */,
+				F74046C01DEE6F9700D60D33 /* LZJTabBarViewController.m in Sources */,
+				F74046BF1DEE6F9700D60D33 /* LZJNavgationViewController.m in Sources */,
 				F74046E41DEEC49D00D60D33 /* FirstNextNextViewController.m in Sources */,
 				F74046E11DEE759900D60D33 /* FirstNextViewController.m in Sources */,
 				F79338981DED6AC5002EBD8E /* FirstViewController.m in Sources */,

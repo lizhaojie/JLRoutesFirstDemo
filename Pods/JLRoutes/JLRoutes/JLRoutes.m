@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2016, Joel Levin
+ Copyright (c) 2017, Joel Levin
  All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -12,7 +12,7 @@
 
 #import "JLRoutes.h"
 #import "JLRRouteDefinition.h"
-#import "JLROptionalRouteParser.h"
+#import "JLRParsingUtilities.h"
 
 
 NSString *const JLRoutePatternKey = @"JLRoutePattern";
@@ -21,15 +21,18 @@ NSString *const JLRouteSchemeKey = @"JLRouteScheme";
 NSString *const JLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
 NSString *const JLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
 
-//Map{scheme:(route,route),....}
+
 static NSMutableDictionary *routeControllersMap = nil;
+
+// global options
 static BOOL verboseLoggingEnabled = NO;
 static BOOL shouldDecodePlusSymbols = YES;
+static BOOL alwaysTreatsHostAsPathComponent = NO;
 
 
 @interface JLRoutes ()
 
-@property (nonatomic, strong) NSMutableArray *routes;
+@property (nonatomic, strong) NSMutableArray *mutableRoutes;
 @property (nonatomic, strong) NSString *scheme;
 
 @end
@@ -42,26 +45,26 @@ static BOOL shouldDecodePlusSymbols = YES;
 - (instancetype)init
 {
     if ((self = [super init])) {
-        self.routes = [NSMutableArray array];
+        self.mutableRoutes = [NSMutableArray array];
     }
     return self;
 }
 
 - (NSString *)description
 {
-    return [self.routes description];
+    return [self.mutableRoutes description];
 }
 
-+ (NSString *)allRoutes
++ (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 {
-    NSMutableString *descriptionString = [NSMutableString stringWithString:@"\n"];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    for (NSString *routesNamespace in routeControllersMap) {
-        JLRoutes *routesController = routeControllersMap[routesNamespace];
-        [descriptionString appendFormat:@"\"%@\":\n%@\n\n", routesController.scheme, routesController.routes];
+    for (NSString *namespace in [routeControllersMap copy]) {
+        JLRoutes *routesController = routeControllersMap[namespace];
+        dictionary[namespace] = [routesController.mutableRoutes copy];
     }
     
-    return descriptionString;
+    return [dictionary copy];
 }
 
 
@@ -105,6 +108,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 #pragma mark - Registering Routes
 
+- (void)addRoute:(JLRRouteDefinition *)routeDefinition
+{
+    [self _registerRoute:routeDefinition];
+}
+
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
     [self addRoute:routePattern priority:0 handler:handlerBlock];
@@ -119,18 +127,20 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
-    NSArray <NSString *> *optionalRoutePatterns = [JLROptionalRouteParser expandOptionalRoutePatternsForPattern:routePattern];
+    NSArray <NSString *> *optionalRoutePatterns = [JLRParsingUtilities expandOptionalRoutePatternsForPattern:routePattern];
+    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
-        for (NSString *route in optionalRoutePatterns) {
+        for (NSString *pattern in optionalRoutePatterns) {
             [self _verboseLog:@"Automatically created optional route: %@", route];
-            [self _registerRoute:route priority:priority handler:handlerBlock];
+            JLRRouteDefinition *optionalRoute = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
+            [self _registerRoute:optionalRoute];
         }
         return;
     }
     
-    [self _registerRoute:routePattern priority:priority handler:handlerBlock];
+    [self _registerRoute:route];
 }
 
 - (void)removeRoute:(NSString *)routePattern
@@ -142,7 +152,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSInteger routeIndex = NSNotFound;
     NSInteger index = 0;
     
-    for (JLRRouteDefinition *route in [self.routes copy]) {
+    for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         if ([route.pattern isEqualToString:routePattern]) {
             routeIndex = index;
             break;
@@ -151,13 +161,13 @@ static BOOL shouldDecodePlusSymbols = YES;
     }
     
     if (routeIndex != NSNotFound) {
-        [self.routes removeObjectAtIndex:(NSUInteger)routeIndex];
+        [self.mutableRoutes removeObjectAtIndex:(NSUInteger)routeIndex];
     }
 }
 
 - (void)removeAllRoutes
 {
-    [self.routes removeAllObjects];
+    [self.mutableRoutes removeAllObjects];
 }
 
 - (void)setObject:(id)handlerBlock forKeyedSubscript:(NSString *)routePatten
@@ -165,6 +175,10 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self addRoute:routePatten handler:handlerBlock];
 }
 
+- (NSArray <JLRRouteDefinition *> *)routes;
+{
+    return [self.mutableRoutes copy];
+}
 
 #pragma mark - Routing URLs
 
@@ -210,21 +224,19 @@ static BOOL shouldDecodePlusSymbols = YES;
     return routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
 }
 
-- (void)_registerRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock
+- (void)_registerRoute:(JLRRouteDefinition *)route
 {
-    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
-    
-    if (priority == 0 || self.routes.count == 0) {
-        [self.routes addObject:route];
+    if (route.priority == 0 || self.mutableRoutes.count == 0) {
+        [self.mutableRoutes addObject:route];
     } else {
         NSUInteger index = 0;
         BOOL addedRoute = NO;
         
         // search through existing routes looking for a lower priority route than this one
-        for (JLRRouteDefinition *existingRoute in [self.routes copy]) {
-            if (existingRoute.priority < priority) {
+        for (JLRRouteDefinition *existingRoute in [self.mutableRoutes copy]) {
+            if (existingRoute.priority < route.priority) {
                 // if found, add the route after it
-                [self.routes insertObject:route atIndex:index];
+                [self.mutableRoutes insertObject:route atIndex:index];
                 addedRoute = YES;
                 break;
             }
@@ -233,7 +245,7 @@ static BOOL shouldDecodePlusSymbols = YES;
         
         // if we weren't able to find a lower priority route, this is the new lowest priority route (or same priority as self.routes.lastObject) and should just be added
         if (!addedRoute) {
-            [self.routes addObject:route];
+            [self.mutableRoutes addObject:route];
         }
     }
 }
@@ -247,9 +259,9 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL alwaysTreatsHostAsPathComponent:alwaysTreatsHostAsPathComponent];
     
-    for (JLRRouteDefinition *route in [self.routes copy]) {
+    for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
         JLRRouteResponse *response = [route routeResponseForRequest:request decodePlusSymbols:shouldDecodePlusSymbols];
         if (!response.isMatch) {
@@ -343,6 +355,16 @@ static BOOL shouldDecodePlusSymbols = YES;
 + (BOOL)shouldDecodePlusSymbols
 {
     return shouldDecodePlusSymbols;
+}
+
++ (void)setAlwaysTreatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent
+{
+    alwaysTreatsHostAsPathComponent = treatsHostAsPathComponent;
+}
+
++ (BOOL)alwaysTreatsHostAsPathComponent
+{
+    return alwaysTreatsHostAsPathComponent;
 }
 
 @end

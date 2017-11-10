@@ -7,7 +7,7 @@
 //
 
 #import "FirstViewController.h"
-#import "CCBusMacro.h"
+#import "LZJMacro.h"
 #import "FirstNextViewController.h"
 @interface FirstViewController ()
 
