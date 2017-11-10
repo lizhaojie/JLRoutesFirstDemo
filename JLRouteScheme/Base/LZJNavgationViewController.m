@@ -7,7 +7,7 @@
 //
 
 #import "CTNavgationViewController.h"
-#import "CCBusMacro.h"
+#import "LZJMacro.h"
 @interface CTNavgationViewController ()
 
 @end

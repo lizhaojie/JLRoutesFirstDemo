@@ -11,7 +11,7 @@
 #import "FirstViewController.h"
 #import "SecondViewController.h"
 #import "ThirdViewController.h"
-#import "CCBusMacro.h"
+#import "LZJMacro.h"
 #import <Masonry.h>
 
 
