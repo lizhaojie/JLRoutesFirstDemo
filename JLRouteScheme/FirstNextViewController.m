@@ -19,6 +19,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     self.title = self.titleText;
+    NSLog(@"name == %@", self.name);
 //    [self registerRouteWithScheme:@"RouteOne" className:@"FirstNextNextViewController"];
 
     self.view.backgroundColor = [UIColor redColor];

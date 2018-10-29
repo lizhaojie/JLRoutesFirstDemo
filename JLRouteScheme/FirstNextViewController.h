@@ -10,4 +10,6 @@
 
 @interface FirstNextViewController : UIViewController
 @property (nonatomic,copy) NSString *titleText;
+@property (nonatomic,copy) NSString *name;
+
 @end

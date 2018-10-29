@@ -43,10 +43,17 @@
     [btn addTarget:self action:@selector(skipNext) forControlEvents:UIControlEventTouchUpInside];
     
 }
+
+#pragma - mark ----------- url中有汉字要encode下 -----------
+
+
 - (void)skipNext{
-  
-     NSString *url = @"RouteOne://push/FirstNextViewController?titleText=fromFirst";
-    [[UIApplication sharedApplication]openURL:[NSURL URLWithString:url]];
+    NSString *name = @"中国";
+    NSString *url = @"RouteOne://push/FirstNextViewController?titleText=fromFirst&name=中国";
+    NSCharacterSet *allowCharacters = [[NSCharacterSet characterSetWithCharactersInString:name] invertedSet];
+    NSString *encodedUrl = [url stringByAddingPercentEncodingWithAllowedCharacters:allowCharacters];
+    
+    [[UIApplication sharedApplication] openURL:[NSURL URLWithString:encodedUrl]];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
